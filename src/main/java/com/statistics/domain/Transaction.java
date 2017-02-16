@@ -5,6 +5,9 @@ public class Transaction {
 	private double amount;
 	private long timestamp;
 
+	public Transaction() {
+	}
+
 	public Transaction(double amount, long timestamp) {
 		this.amount = amount;
 		this.timestamp = timestamp;

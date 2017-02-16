@@ -12,10 +12,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.statistics.domain.IStatisticsService;
 import com.statistics.domain.StatisticsService;
+import com.statistics.domain.TimeProvider;
 import com.statistics.domain.Transaction;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = { TransactionsController.class, StatisticsService.class })
+@SpringBootTest(classes = { TransactionsController.class, StatisticsService.class, TimeProvider.class })
 public class TestTransactionsController {
 
 	@Autowired
@@ -31,7 +32,7 @@ public class TestTransactionsController {
 
 	@Test
 	public void testSimpleAddTransaction() {
-		Transaction transaction = new Transaction(12.3, 1478192204000L);
+		Transaction transaction = new Transaction(12.3, System.currentTimeMillis());
 
 		assertEquals(0, statisticService.getStatisticsCount());
 

@@ -10,11 +10,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.statistics.domain.IStatisticsService;
+import com.statistics.domain.StatisticsResult;
 import com.statistics.domain.StatisticsService;
+import com.statistics.domain.TimeProvider;
 import com.statistics.domain.Transaction;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {StatisticsController.class, StatisticsService.class})
+@SpringBootTest(classes = { StatisticsController.class, StatisticsService.class, TimeProvider.class })
 public class TestStatisticsController {
 
 	@Autowired
@@ -30,13 +32,21 @@ public class TestStatisticsController {
 
 	@Test
 	public void testGetStatisticsEmpty() {
-		assertEquals("0", statisticsController.getStatistics());
+		StatisticsResult result = statisticsController.getStatistics();
+		assertEquals(0, result.count);
 	}
 
 	@Test
 	public void testGetStatisticsSizeOne() {
-		statisticService.addTransaction(new Transaction(1, 300));
+		statisticService.addTransaction(new Transaction(5, System.currentTimeMillis()));
 
-		assertEquals("1", statisticsController.getStatistics());
+		StatisticsResult result = statisticsController.getStatistics();
+
+		assertEquals(Double.valueOf(5), Double.valueOf(result.sum));
+		assertEquals(Double.valueOf(5), Double.valueOf(result.avg));
+		assertEquals(Double.valueOf(5), result.max);
+		assertEquals(Double.valueOf(5), result.min);
+		assertEquals(1, result.count);
+
 	}
 }
