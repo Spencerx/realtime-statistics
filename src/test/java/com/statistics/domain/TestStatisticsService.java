@@ -127,7 +127,7 @@ public class TestStatisticsService {
 	}
 
 	@Test
-	public void three_transactions_one_expires() {
+	public void tree_transactions_one_expires() {
 		TimeProvider tp = Mockito.mock(TimeProvider.class);
 
 		Mockito.when(tp.getCurrentTime()).thenReturn(250 * 1000L);
@@ -154,6 +154,36 @@ public class TestStatisticsService {
 		assertEquals(Double.valueOf(13), Double.valueOf(result.sum));
 		assertEquals(Double.valueOf(2), Double.valueOf(result.count));
 		assertEquals(Double.valueOf(11), result.max);
+		assertEquals(Double.valueOf(2), result.min);
+	}
+	
+	@Test
+	public void transactions_same_max_one_expires() {
+		TimeProvider tp = Mockito.mock(TimeProvider.class);
+
+		Mockito.when(tp.getCurrentTime()).thenReturn(250 * 1000L);
+
+		statsService = new StatisticsService(tp);
+
+		statsService.addTransaction(new Transaction(10, 200 * 1000));
+		statsService.addTransaction(new Transaction(2, 299 * 1000));
+		statsService.addTransaction(new Transaction(10, 300 * 1000));
+
+		StatisticsResult firstResult = statsService.getStatisticsResult();
+
+		assertEquals(Double.valueOf(22), Double.valueOf(firstResult.sum));
+		assertEquals(Double.valueOf(10), firstResult.max);
+		assertEquals(Double.valueOf(2), firstResult.min);
+
+		// Delete old results:
+		Mockito.when(tp.getCurrentTime()).thenReturn(290 * 1000L);
+		statsService.removeOldEntries();
+
+		StatisticsResult result = statsService.getStatisticsResult();
+
+		assertEquals(Double.valueOf(12), Double.valueOf(result.sum));
+		assertEquals(Double.valueOf(2), Double.valueOf(result.count));
+		assertEquals(Double.valueOf(10), result.max);
 		assertEquals(Double.valueOf(2), result.min);
 	}
 
