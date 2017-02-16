@@ -31,7 +31,7 @@ public class TestTransactionsController {
 
 	@Test
 	public void testSimpleAddTransaction() {
-		Transaction transaction = new Transaction();
+		Transaction transaction = new Transaction(12.3, 1478192204000L);
 
 		assertEquals(0, statisticService.getStatisticsCount());
 

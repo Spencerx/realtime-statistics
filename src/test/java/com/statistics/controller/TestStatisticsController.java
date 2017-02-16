@@ -35,7 +35,7 @@ public class TestStatisticsController {
 
 	@Test
 	public void testGetStatisticsSizeOne() {
-		statisticService.addTransaction(new Transaction());
+		statisticService.addTransaction(new Transaction(1, 300));
 
 		assertEquals("1", statisticsController.getStatistics());
 	}

@@ -7,23 +7,48 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class StatisticsService implements IStatisticsService {
+	double sumValues;
+	Double maxValue;
+	Double minValue;
 	List<Transaction> transactions;
-	
-	public StatisticsService()
-	{
+
+	public StatisticsService() {
 		transactions = new LinkedList<Transaction>();
 	}
-	
-	public void addTransaction(Transaction transaction) {
+
+	synchronized public void addTransaction(Transaction transaction) {
+		if (transaction == null) {
+			return;
+		}
+
+		if (maxValue == null || transaction.getAmount() > maxValue) {
+			maxValue = transaction.getAmount();
+		}
+
+		if (minValue == null || transaction.getAmount() < minValue) {
+			minValue = transaction.getAmount();
+		}
+
+		sumValues += transaction.getAmount();
 		transactions.add(transaction);
 	}
 
-	public int getStatisticsCount() {
+	synchronized public int getStatisticsCount() {
 		return transactions.size();
 	}
 
-	public void reset() {
+	synchronized public void reset() {
 		transactions.clear();
+	}
+
+	synchronized public StatisticsResult getStatisticsResult() {
+		StatisticsResult result = new StatisticsResult();
+		result.sum = sumValues;
+		result.avg = transactions.size() > 0 ? sumValues / transactions.size() : 0;
+		result.count = transactions.size();
+		result.max = maxValue;
+		result.min = minValue;
+		return result;
 	}
 
 }
